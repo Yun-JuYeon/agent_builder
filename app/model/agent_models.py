@@ -10,9 +10,18 @@ class GetSessionResponse(BaseModel):
 class RunRequest(BaseModel):
     app_name: str
     user_id: str
-    session_id: Optional[str] = None
+    session_id: str
     message: str
     streaming: bool = False
+
+
+class ChatADKRequest(BaseModel):
+    appName: str
+    userId: str
+    sessionId: str
+    newMessage: dict
+    streaming: bool = True
+    stateDelta: Optional[dict] = None  # 상태 델타는 선택적 필드로 추가
 
 
 # Deploy

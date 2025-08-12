@@ -24,7 +24,8 @@ class Settings(BaseSettings):
     CL_DB: str
 
     GOOGLE_API_KEY: str
-
+    BASE_URL: str
+    
     model_config = SettingsConfigDict(
         env_file=".env", extra="ignore", env_file_encoding="utf-8"
     )

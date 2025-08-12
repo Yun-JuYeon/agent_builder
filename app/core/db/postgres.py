@@ -1,4 +1,6 @@
 from google.adk.sessions import DatabaseSessionService
+from google.adk.sessions.database_session_service import StorageEvent
+from google.adk.sessions.database_session_service import StorageSession
 from google.adk.events import Event
 from app.config import settings
 
@@ -20,7 +22,6 @@ def get_session_ids(app_name: str, user_id: str):
     DatabaseSessionService를 사용해 해당 app/user의 세션 id 목록을 조회
     """
     with session_service.database_session_factory() as sql_session:
-        from google.adk.sessions.database_session_service import StorageSession
         results = (
             sql_session.query(StorageSession.id)
             .filter(StorageSession.app_name == app_name)
@@ -36,7 +37,6 @@ def get_events_for_session(app_name: str, user_id: str, session_id: str) -> list
     DatabaseSessionService를 사용해 특정 세션의 이벤트 목록을 조회
     """
     with session_service.database_session_factory() as sql_session:
-        from google.adk.sessions.database_session_service import StorageEvent
         results = (
             sql_session.query(StorageEvent)
             .filter(StorageEvent.app_name == app_name)
@@ -57,7 +57,7 @@ def get_events_for_session(app_name: str, user_id: str, session_id: str) -> list
             print(events[-1])
         return events
     
-
+    
 if __name__ == "__main__":
     # 예시 실행
     app_name = "jyyun_weather_agent"
