@@ -2,10 +2,6 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class GetSessionResponse(BaseModel):
-    session_id: list[str]
-
-
 # ADK /run Request 메서드
 class RunRequest(BaseModel):
     app_name: str

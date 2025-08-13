@@ -12,49 +12,12 @@ from app.config import settings
 agent_router = APIRouter()
 
 
-# # I/O 정의에 따라 request, response 값 변동
-# @agent_router.post("/chat")
-# async def chat_with_adk_agent(request: RunRequest):
-#     CHAT_AGENT_URL = "http://192.168.150.200:3000/api/v1/test-chat/jyyun/message"
-#     async with httpx.AsyncClient() as client:
-#         try:
-#             response = await client.post(CHAT_AGENT_URL, json=request.model_dump())
-#             response.raise_for_status()
-#             return response.json()
-#         except httpx.HTTPError as e:
-#             raise HTTPException(status_code=500, detail=f"ADK 요청 실패: {str(e)}")
-
-
-# @agent_router.get("/agent-info")
-# async def agent_info():
-#     """Provide agent information"""
-#     return {
-#         "agent_name": root_agent.name,
-#         "description": root_agent.description,
-#         "model": root_agent.model,
-#         "tools": [t.__name__ for t in root_agent.tools],
-#     }
-
-
-# @agent_router.post("/weather-chat")
-# async def chat(req: RunRequest):
-#     msg = req.message.lower().strip()
-
-#     if "경보" in msg:
-#         result = await mcp.call_tool("get_alerts", {"state": "CA"})
-#     elif "날씨" in msg or "예보" in msg:
-#         result = await mcp.call_tool(
-#             "get_forecast", {"latitude": 37.7749, "longitude": -122.4194}
-#         )
-#     else:
-#         result = "죄송해요, 이해하지 못했어요."
-
-#     return {"response": result}
-
-
 # 사용자별 에이전트 배포 API
 @agent_router.post("/deploy")
 async def post_to_deploy(request: DeploymentRequest):
+    """
+    에이전트 배포 요청 API
+    """
     DEPLOY_URL = "http://192.168.150.200:3000/api/v1/agents/deploy"
     OVERWRITE_DEPLOY_URL = "http://192.168.150.200:3000/api/v1/agents/deploy/overwrite"
 
@@ -90,6 +53,9 @@ async def post_to_deploy(request: DeploymentRequest):
 # 사용자별 에이전트 목록 조회 API
 @agent_router.get("/user/{user_id}/agents")
 async def get_user_agents(user_id: str):
+    """
+    해당 사용자의 모든 에이전트 목록 조회 API
+    """
     REQUEST_URL = f"http://192.168.150.200:3000/api/v1/agents/user/{user_id}"
 
     async with httpx.AsyncClient() as client:
@@ -105,10 +71,41 @@ async def get_user_agents(user_id: str):
             )
 
 
+@agent_router.delete("/user/{user_id}/agents")
+async def chat_with_adk_agent(user_id: str):
+    """
+    해당 사용자의 모든 에이전트 삭제 API
+    """
+    AGENT_URL = f"http://192.168.150.200:3000/api/v1/agents/user/{user_id}"
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.delete(AGENT_URL)
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPError as e:
+            raise HTTPException(status_code=500, detail=f"ADK 요청 실패: {str(e)}")
+
+
+@agent_router.delete("/user/{user_id}/agents/{agent_name}")
+async def chat_with_adk_agent(user_id: str, agent_name: str):
+    """
+    해당 사용자의 특정 에이전트 삭제 API
+    """
+    AGENT_URL = f"http://192.168.150.200:3000/api/v1/agents/user/{user_id}/{agent_name}"
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.delete(AGENT_URL)
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPError as e:
+            raise HTTPException(status_code=500, detail=f"ADK 요청 실패: {str(e)}")
+
+
 # Agent와의 채팅 API
 @agent_router.post("/user/{user_id}/chat/{app_name}")
 async def chat_agent(request: RunRequest):
     """
+    ```json
     {
         "app_name": "calculator_agent",
         "user_id": "user",
@@ -116,6 +113,7 @@ async def chat_agent(request: RunRequest):
         "session_id": "9b7a31e5-62dc-40b6-9223-030d214082e4",
         "streaming": true
     }
+    ```
     """
     port = "8006"  # 사용자별 포트 조회 하는 로직 필요
     base_url = settings.BASE_URL

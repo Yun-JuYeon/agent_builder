@@ -12,7 +12,7 @@ FastAPI app 설정
 
 ## 프로젝트 실행 방법
 1. 서버 실행
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 
 2. prometheus 서버 실행(아래 경로는 로컬 프로메테우스 경로)
 ../../prometheus-3.5.0.windows-amd64/prometheus --config.file=./prometheus.yml

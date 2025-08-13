@@ -3,12 +3,13 @@ from fastapi import APIRouter
 
 prometheus_router = APIRouter()
 
+
 # I/O 정의에 따라 request, response 값 변동
 @prometheus_router.get("/metrics/requests")
 async def get_request_counts():
     PROMETHEUS_URL = "http://dev03.didim365.co:29003"
     query = 'sum by (handler, method, status) (increase(http_request_duration_seconds_count{status!=""}[15d]))'
-    params = {"query": query}   # PromQL
+    params = {"query": query}  # PromQL
 
     async with httpx.AsyncClient() as client:
         res = await client.get(f"{PROMETHEUS_URL}/api/v1/query", params=params)
