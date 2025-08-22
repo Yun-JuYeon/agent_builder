@@ -60,8 +60,9 @@ def get_events_for_session(app_name: str, user_id: str, session_id: str) -> list
     
 if __name__ == "__main__":
     # 예시 실행
-    app_name = "jyyun_weather_agent"
-    user_id = "jyyun"
-    session_ids = get_session_ids(app_name, user_id)
-    if session_ids:
-        get_events_for_session(app_name, user_id, session_ids[0])
+    # app_name = "jyyun_weather_agent"
+    # user_id = "jyyun"
+    # session_ids = get_session_ids(app_name, user_id)
+    # if session_ids:
+    #     get_events_for_session(app_name, user_id, session_ids[0])
+    print(session_service)

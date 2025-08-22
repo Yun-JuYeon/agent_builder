@@ -4,6 +4,7 @@ from prometheus_fastapi_instrumentator.metrics import (
     latency, requests
 )
 from app.router.agent import agent_router
+from app.router.sessions import session_router
 from app.router.prometheus import prometheus_router
 from app.config import settings
  
@@ -15,6 +16,7 @@ Instrumentator(
 ).add(latency()).add(requests()).instrument(app).expose(app)
 
 api_router.include_router(agent_router, prefix="/agent", tags=["Agent"])
+api_router.include_router(session_router, prefix="/agent/session", tags=["Session"])
 api_router.include_router(prometheus_router, prefix="/prometheus", tags=["Prometheus"])
 
 app.include_router(api_router)
